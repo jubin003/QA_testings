@@ -1,0 +1,15 @@
+{
+    "validContact":{
+        "fname":"Jhon",
+        "lname":"Mon",
+        "email":"Jhonmon@gmail.com",
+        "phone":"9898989898"
+    },
+
+    "invalidContact":{
+        "fname":"Jhon",
+        "lname":"Mon",
+        "email":"Jhonmon12gmail.com",
+        "phone":"ababababa"
+    }
+}
