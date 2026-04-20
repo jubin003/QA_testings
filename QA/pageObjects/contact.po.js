@@ -1,24 +1,31 @@
-const {expect}= require('@playwright/test')
-import { LoginPage } from './login.po';
+import { expect } from '@playwright/test';
+import { LoginPage } from './login.po.js';
 
-exports.Contactpage= class ContactPage{
-    constructor(page)
-    {
-        this.page=page;
-        this.addContactBtn='//button[@id="add-contact"]';
-        this.fName='//input[@id="firstName"]';
-        this.lName='//input[@id="lastName"]';
-        this.email='//input[@id="email"]';
-        this.phone='//input[@id="phone"]';
-        this.add='//button[@id="submit"]';
-        this.contactValidation='(//td[@hidden="true"])[1]'
-        this.usernameInput='#email';
-        this.passwordInput='//input[@placeholder="Password"]';
-        this.logInButton='//button[@id="submit"]';
-        this.error='//span[@id="error"]';
+export class ContactPage {
+    constructor(page) {
+        this.page = page;
+        this.addContactBtn = '//button[@id="add-contact"]';
+        this.fName = '//input[@id="firstName"]';
+        this.lName = '//input[@id="lastName"]';
+        this.email = '//input[@id="email"]';
+        this.phone = '//input[@id="phone"]';
+        this.add = '//button[@id="submit"]';
+        this.contactValidation = '(//td[@hidden="true"])[1]';
+        this.usernameInput = '#email';
+        this.passwordInput = '#password';
+        this.logInButton = '//button[@id="submit"]';
+        this.error = '//span[@id="error"]';
+        this.savedFirstName = '//span[@id="firstName"]'; // assuming
+        this.savedLastName = '//span[@id="lastName"]';
+        this.savedEmail = '//span[@id="email"]';
+        this.savedPhone = '//span[@id="phone"]';
+        this.viewCreatedContact = '(//tr[@class="contactTableBodyRow"])[1]'; // assuming first contact
+        this.editContact = '//button[@id="edit-contact"]';
+        this.firstName = '//input[@id="firstName"]'; // same as fName
+        this.Save = '//button[@id="submit"]';
+        this.deleteContact = '//button[@id="delete"]'; // assuming
     }
     async contact(fName,lName,email,phone){
-        await this.page.waitForTimeout(2000);
         await this.page.locator(this.addContactBtn).click();
         await this.page.locator(this.fName).fill(fName);
         await this.page.locator(this.lName).fill(lName);
@@ -33,8 +40,7 @@ exports.Contactpage= class ContactPage{
     }
     async verifyContactField(){
         const contactValidation = await this.page.locator(this.contactValidation);
-        await this.page.waitForTimeout(2000);
-        expect(this.addContactBtn).toBeVisible;
+        await expect(this.page.locator(this.addContactBtn)).toBeVisible();
         await expect(contactValidation).toContainText('69e');
     }
     async verifyInvalidContactField(){
@@ -42,12 +48,32 @@ exports.Contactpage= class ContactPage{
         await expect(invalidContact).toContainText("Contact validation failed:")
     }
 
-    // async validateContactCreated(fName,lName,email,phone){
-    //     const fNameValidation = await this.page.locator(this.savedFirstName);
-    //     const lNameValidation = await this.page.locator(this.savedLastName);
-    //     const emailValidation = await this.page.locator(this.savedEmail);
-    //     const phoneValidation = await this.page.locator(this.savedphone);
-    // }
+    async validateContactCreated(fName,lName,email,phone){
+        const fNameValidation = await this.page.locator(this.savedFirstName);
+        const lNameValidation = await this.page.locator(this.savedLastName);
+        const emailValidation = await this.page.locator(this.savedEmail);
+        const phoneValidation = await this.page.locator(this.savedPhone);
+    }
 
-    
+    async viewContact() {
+
+        await this.page.locator(this.viewCreatedContact).click();
+        
+    }
+
+    async contactEdit(firstName){
+        await this.page.locator(this.editContact).click();
+        await this.page.locator(this.firstName).clear();
+        await this.page.locator(this.firstName).fill(firstName);
+        await this.page.locator(this.Save).click();
+    }
+
+    async contactDelete(){
+        await this.page.waitForTimeout(2000);
+        this.page.once('dialog', async dialog => {
+            console.log(`Dialog message: ${dialog.message()}`);
+            await dialog.accept();
+        });
+        await this.page.locator(this.deleteContact).click();
+    }
 }
