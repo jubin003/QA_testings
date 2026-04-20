@@ -2,8 +2,14 @@ import { test } from "@playwright/test"
 import { ContactPage } from "../pageObjects/contact.po.js"
 import { LoginPage } from "../pageObjects/login.po.js";
 import { authenticateUser, createEntity, deleteEntity, getEntity, validateEntity } from '../utils/helper.spec.js'
-import testDataC from '../test_data/contactTest.json' assert { type: 'json' };
-import testDataL from '../test_data/loginTest.json' assert { type: 'json' };
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const testDataC = JSON.parse(readFileSync(join(__dirname, '../test_data/contactTest.json'), 'utf8'));
+const testDataL = JSON.parse(readFileSync(join(__dirname, '../test_data/loginTest.json'), 'utf8'));
 
 
 
@@ -77,11 +83,10 @@ test.describe('adding invalid contact details', () => {
         };
         const contact = new ContactPage(page);
         const accessToken = await authenticateUser(testDataL.validUser.userName, testDataL.validUser.password, { request });
-        await createEntity(Data, accessToken, '/contacts', { request });
+        const id = await createEntity(Data, accessToken, '/contacts', { request });
         page.reload();
         await contact.viewContact();
         await contact.contactEdit(testDataC.contactEdit.firstName);
-        const id = await getEntity(accessToken, '/contacts', '200', { request });
         await deleteEntity(accessToken, `/contacts/${id}`, { request });
         await validateEntity(accessToken, `/contacts/${id}`, '404', { request });
     });

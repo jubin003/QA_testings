@@ -1,12 +1,6 @@
 import {test} from '@playwright/test';
 import { LoginPage } from '../pageObjects/login.po';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const testData = JSON.parse(readFileSync(join(__dirname, '../test_data/loginTest.json'), 'utf8'));
+const testData = require('../test_data/loginTest.json');
 
 test.beforeEach(async({page})=>{
     await page.goto('/');

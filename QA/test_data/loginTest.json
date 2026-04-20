@@ -5,6 +5,6 @@
     },
     "invalidUser":{
         "userName":"ghghghghg",
-        "password":"jubin123" 
+        "password":"wrongpass" 
     }
 }
