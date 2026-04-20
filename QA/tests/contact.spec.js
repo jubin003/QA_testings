@@ -24,7 +24,11 @@ test.describe('adding valid contact details', () => {
     test('contact validation', async ({ page }) => {
         const contact = new ContactPage(page);
         await contact.contact(testDataC.validContact.fname, testDataC.validContact.lname, testDataC.validContact.email, testDataC.validContact.phone);
-        await contact.verifyContactField();
+        await contact.verifyContactCreated(testDataC.validContact.fname, testDataC.validContact.lname, testDataC.validContact.email, testDataC.validContact.phone); 
+        accessToken = await authenticateUser(testDataL.validUser.userName, testDataL.validUser.password, { request });
+        const id = await getEntity(accessToken, '/contacts', '200', { request });
+        await deleteEntity(accessToken, `/contacts/${id}`, { request });
+        await validateEntity(accessToken, `/contacts/${id}`, '404', { request });   
     });
 })
 test.describe('adding invalid contact details', () => {
