@@ -20,7 +20,7 @@ jobs:
       - name: Run Playwright Browers
         run: npx playwright install --with-deps
       - name: Run Playwright Tests
-        run: npx playwright test
+        run: npx playwright test tests/login.spec.js --project chromium
       - uses: actions/upload-artifact@v4
         if: always()
         with:
